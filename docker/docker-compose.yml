@@ -1,0 +1,32 @@
+version: "3.9"
+
+# ---------------------------------------------------------------------------
+# MC Panel Docker Compose
+# ---------------------------------------------------------------------------
+# This file starts the panel backend.
+# Minecraft servers are launched as individual containers by the panel itself
+# using the Docker SDK (docker-py) — they are NOT declared here.
+# ---------------------------------------------------------------------------
+
+services:
+  panel:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.panel
+    image: mc-panel:latest
+    container_name: mc-panel
+    restart: unless-stopped
+    ports:
+      - "${PANEL_PORT:-8000}:8000"
+    volumes:
+      - ../backend/data:/app/backend/data          # persistent JSON storage
+      - ../backend/config:/app/backend/config      # runtime config
+      - /var/run/docker.sock:/var/run/docker.sock  # Docker-in-Docker for MC servers
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - mc-net
+
+networks:
+  mc-net:
+    driver: bridge

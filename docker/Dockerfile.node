@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+
+LABEL maintainer="MC Panel Node Agent"
+
+WORKDIR /app
+
+COPY node/agent/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY node/agent/agent.py .
+
+# Required env vars: PANEL_URL, NODE_TOKEN
+ENV HEARTBEAT_INTERVAL=15
+
+CMD ["sh", "-c", "python agent.py --panel-url $PANEL_URL --token $NODE_TOKEN --interval $HEARTBEAT_INTERVAL"]

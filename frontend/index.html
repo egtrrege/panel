@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MC Panel — Login</title>
+  <meta name="description" content="Minecraft Hosting Control Panel — Secure Admin Login" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="login-page">
+  <div class="login-bg">
+    <div class="login-particles" id="particles"></div>
+    <div class="login-card glass">
+      <div class="login-logo">
+        <div class="logo-icon">⛏</div>
+        <h1 class="login-title">MC Panel</h1>
+        <p class="login-sub">Minecraft Hosting Control Panel</p>
+      </div>
+      <form id="loginForm" class="login-form" autocomplete="on">
+        <div class="field-group">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" placeholder="admin"
+                 autocomplete="username" required />
+        </div>
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="••••••••"
+                 autocomplete="current-password" required />
+        </div>
+        <div id="loginError" class="alert alert-error hidden">Invalid credentials</div>
+        <button id="loginBtn" type="submit" class="btn btn-primary btn-full">
+          <span class="btn-text">Sign In</span>
+          <span class="btn-spinner hidden"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+  <script src="js/api.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

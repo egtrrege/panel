@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — MC Panel</title>
+  <meta name="description" content="MC Panel Dashboard — manage Minecraft servers and nodes" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="dashboard-page">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────── -->
+  <aside class="sidebar glass" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">⛏</span>
+      <span class="sidebar-brand">MC Panel</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-view="overview" id="nav-overview">
+        <span class="nav-icon">📊</span> Overview
+      </a>
+      <a href="#" class="nav-item" data-view="servers" id="nav-servers">
+        <span class="nav-icon">🖥️</span> Servers
+      </a>
+      <a href="#" class="nav-item" data-view="nodes" id="nav-nodes">
+        <span class="nav-icon">🌐</span> Nodes
+      </a>
+      <a href="#" class="nav-item" data-view="network" id="nav-network">
+        <span class="nav-icon">🔗</span> Network
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <span id="sidebarUser" class="sidebar-username">—</span>
+      <button id="logoutBtn" class="btn btn-ghost btn-sm">Logout</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ────────────────────────────────────────────────────── -->
+  <main class="main-content" id="mainContent">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <h2 class="topbar-title" id="pageTitle">Overview</h2>
+      <div class="topbar-actions">
+        <button id="refreshBtn" class="btn btn-ghost btn-icon" title="Refresh">↻</button>
+      </div>
+    </header>
+
+    <!-- ── VIEW: Overview ──────────────────────────────────────── -->
+    <section class="view" id="view-overview">
+      <div class="stats-grid">
+        <div class="stat-card glass">
+          <div class="stat-icon">🖥️</div>
+          <div class="stat-body">
+            <span class="stat-label">Servers</span>
+            <span class="stat-value" id="stat-servers">—</span>
+          </div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-icon">▶️</div>
+          <div class="stat-body">
+            <span class="stat-label">Running</span>
+            <span class="stat-value" id="stat-running">—</span>
+          </div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-icon">🌐</div>
+          <div class="stat-body">
+            <span class="stat-label">Nodes</span>
+            <span class="stat-value" id="stat-nodes">—</span>
+          </div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-icon">💚</div>
+          <div class="stat-body">
+            <span class="stat-label">Nodes Online</span>
+            <span class="stat-value" id="stat-nodes-online">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-heading">Recent Servers</div>
+      <div id="overview-server-list" class="server-list"></div>
+    </section>
+
+    <!-- ── VIEW: Servers ───────────────────────────────────────── -->
+    <section class="view hidden" id="view-servers">
+      <div class="view-toolbar">
+        <div class="section-heading">Servers</div>
+        <button id="openCreateServerModal" class="btn btn-primary btn-sm">+ New Server</button>
+      </div>
+      <div id="server-list" class="server-list"></div>
+    </section>
+
+    <!-- ── VIEW: Nodes ─────────────────────────────────────────── -->
+    <section class="view hidden" id="view-nodes">
+      <div class="view-toolbar">
+        <div class="section-heading">Nodes</div>
+        <button id="openAddNodeModal" class="btn btn-primary btn-sm">+ Add Node</button>
+      </div>
+      <div id="node-list" class="node-list"></div>
+    </section>
+
+    <!-- ── VIEW: Network ───────────────────────────────────────── -->
+    <section class="view hidden" id="view-network">
+      <div class="section-heading">Network / IP Management</div>
+      <div class="network-cards">
+        <div class="glass card">
+          <h3>Global Tunnel IP</h3>
+          <p class="card-desc">Applies to all servers without a custom IP (Playit.gg, FRP, etc.)</p>
+          <form id="tunnelIpForm" class="inline-form">
+            <input id="tunnelIpInput" type="text" placeholder="e.g. abc.joinmc.link:25565" />
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+          </form>
+          <div id="tunnelIpMsg" class="form-msg"></div>
+        </div>
+        <div class="glass card">
+          <h3>Custom IP per Server</h3>
+          <p class="card-desc">Override IP for a specific server (highest priority).</p>
+          <form id="customIpForm" class="inline-form vertical">
+            <select id="customIpServer" class="select">
+              <option value="">— Select server —</option>
+            </select>
+            <input id="customIpInput" type="text" placeholder="e.g. play.example.com:25565" />
+            <button type="submit" class="btn btn-primary btn-sm">Set Custom IP</button>
+          </form>
+          <div id="customIpMsg" class="form-msg"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Modal: Create Server ────────────────────────────────────── -->
+  <div class="modal-overlay hidden" id="createServerModal">
+    <div class="modal glass">
+      <div class="modal-header">
+        <h3>Create New Server</h3>
+        <button class="modal-close" data-modal="createServerModal">✕</button>
+      </div>
+      <form id="createServerForm">
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="cs-name">Server Name</label>
+            <input id="cs-name" type="text" placeholder="My Minecraft Server" required />
+          </div>
+          <div class="field-group">
+            <label for="cs-node">Assign to Node</label>
+            <select id="cs-node" class="select" required>
+              <option value="">— Select node —</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="cs-version">MC Version</label>
+            <input id="cs-version" type="text" placeholder="LATEST" value="LATEST" />
+          </div>
+          <div class="field-group">
+            <label for="cs-type">Server Type</label>
+            <select id="cs-type" class="select">
+              <option value="VANILLA">VANILLA</option>
+              <option value="PAPER">PAPER</option>
+              <option value="FORGE">FORGE</option>
+              <option value="FABRIC">FABRIC</option>
+              <option value="SPIGOT">SPIGOT</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="cs-ram">RAM (MB)</label>
+            <input id="cs-ram" type="number" min="512" max="32768" value="1024" />
+          </div>
+          <div class="field-group">
+            <label for="cs-cpu">CPU Limit (cores)</label>
+            <input id="cs-cpu" type="number" min="0.1" max="16" step="0.1" value="1.0" />
+          </div>
+          <div class="field-group">
+            <label for="cs-port">Port</label>
+            <input id="cs-port" type="number" min="1024" max="65535" value="25565" />
+          </div>
+          <div class="field-group">
+            <label for="cs-mode">Game Mode</label>
+            <select id="cs-mode" class="select">
+              <option value="survival">Survival</option>
+              <option value="creative">Creative</option>
+              <option value="adventure">Adventure</option>
+            </select>
+          </div>
+        </div>
+        <div id="createServerMsg" class="form-msg"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-modal="createServerModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="createServerBtn">Create Server</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Modal: Add Node ─────────────────────────────────────────── -->
+  <div class="modal-overlay hidden" id="addNodeModal">
+    <div class="modal glass">
+      <div class="modal-header">
+        <h3>Add Node</h3>
+        <button class="modal-close" data-modal="addNodeModal">✕</button>
+      </div>
+      <form id="addNodeForm">
+        <div class="field-group">
+          <label for="an-name">Node Name</label>
+          <input id="an-name" type="text" placeholder="vps-eu-01" required />
+        </div>
+        <div class="field-group">
+          <label for="an-address">Node Address (host or IP)</label>
+          <input id="an-address" type="text" placeholder="192.168.1.10" required />
+        </div>
+        <div id="addNodeResult" class="agent-token-box hidden"></div>
+        <div id="addNodeMsg" class="form-msg"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-modal="addNodeModal">Close</button>
+          <button type="submit" class="btn btn-primary" id="addNodeBtn">Add Node</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
